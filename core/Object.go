@@ -14,6 +14,7 @@ type Object interface {
 	DefinitionLocation() *Location
 	Description() string
 	Register(*Engine, string) error
+	Bind(*Engine) error
 }
 
 var nextOID atomic.Uint64

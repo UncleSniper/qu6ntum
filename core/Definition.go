@@ -2,5 +2,6 @@ package core
 
 type Definition interface {
 	Location() *Location
-	Define(*Engine, string) error
+	Register(*Engine, string) error
+	Bind(*Engine) error
 }
