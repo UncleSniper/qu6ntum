@@ -10,6 +10,7 @@ const (
 	VT_INT ValueType = iota + 1
 	VT_FLOAT
 	VT_STRING
+	VT_BOOL
 	VT_OBJECT
 	VT_LIST
 	VT_MAP
@@ -65,6 +66,7 @@ func NewValueType(name string) *ValueTypeInfo {
 			intValueTypeInfo,
 			floatValueTypeInfo,
 			stringValueTypeInfo,
+			boolValueTypeInfo,
 			objectValueTypeInfo,
 			listValueTypeInfo,
 			mapValueTypeInfo,
