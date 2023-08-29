@@ -5,11 +5,23 @@ type Namespaced[ChildT Object] struct {
 	Children []Structured[ChildT]
 }
 
-func(ns *Namespaced[ChildT]) Register(engine *Engine, outerNamespace string) ([]ChildT, error) {
+func(ns *Namespaced[ChildT]) Register(engine *Engine, outerNamespace string) ([]Provider[ChildT], error) {
 	innerNamespace := JoinNames(outerNamespace, ns.Name)
-	var children []ChildT
+	var children []Provider[ChildT]
 	for _, ref := range ns.Children {
 		grandchildren, err := ref.Register(engine, innerNamespace)
+		if err != nil {
+			return nil, err
+		}
+		children = append(children, grandchildren...)
+	}
+	return children, nil
+}
+
+func(ns *Namespaced[ChildT]) Bind(engine *Engine) ([]Provider[ChildT], error) {
+	var children []Provider[ChildT]
+	for _, ref := range ns.Children {
+		grandchildren, err := ref.Bind(engine)
 		if err != nil {
 			return nil, err
 		}
