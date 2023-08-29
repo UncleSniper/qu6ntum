@@ -15,6 +15,8 @@ const (
 	VT_MAP
 	VT_IP4_ADDRESS
 	VT_IP6_ADDRESS
+	VT_IP4_SOCKET_ADDRESS
+	VT_IP6_SOCKET_ADDRESS
 )
 
 type ValueTypeInfo struct {
@@ -68,6 +70,8 @@ func NewValueType(name string) *ValueTypeInfo {
 			mapValueTypeInfo,
 			ip4AddressTypeInfo,
 			ip6AddressTypeInfo,
+			ip4SocketAddressTypeInfo,
+			ip6SocketAddressTypeInfo,
 		}
 	}
 	if len(name) == 0 {
