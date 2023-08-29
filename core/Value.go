@@ -18,6 +18,7 @@ const (
 	VT_IP6_ADDRESS
 	VT_IP4_SOCKET_ADDRESS
 	VT_IP6_SOCKET_ADDRESS
+	VT_ITERABLE
 )
 
 type ValueTypeInfo struct {
@@ -74,6 +75,7 @@ func NewValueType(name string) *ValueTypeInfo {
 			ip6AddressTypeInfo,
 			ip4SocketAddressTypeInfo,
 			ip6SocketAddressTypeInfo,
+			iterableValueTypeInfo,
 		}
 	}
 	if len(name) == 0 {
