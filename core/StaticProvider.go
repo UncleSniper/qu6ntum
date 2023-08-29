@@ -17,7 +17,7 @@ func(provider *StaticProvider[SubjectT]) Bind(*Engine) error {
 	return nil
 }
 
-func(provider *StaticProvider[SubjectT]) Provide(Context) (SubjectT, error) {
+func(provider *StaticProvider[SubjectT]) Provide(Context) (SubjectT, RegistrationError) {
 	return provider.Subject, nil
 }
 

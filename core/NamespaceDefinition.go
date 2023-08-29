@@ -10,7 +10,7 @@ func(ns *NamespaceDefinition) Location() *Location {
 	return ns.DefinedAt
 }
 
-func(ns *NamespaceDefinition) Register(engine *Engine, outerNamespace string) (err error) {
+func(ns *NamespaceDefinition) Register(engine *Engine, outerNamespace string) (err RegistrationError) {
 	innerNamespace := JoinNames(outerNamespace, ns.Name)
 	for _, child := range ns.Children {
 		err = child.Register(engine, innerNamespace)

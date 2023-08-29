@@ -7,7 +7,7 @@ type Unstructured[ChildT Object] struct {
 func(unstruct Unstructured[ChildT]) Register(
 	engine *Engine,
 	namespace string,
-) (children []Provider[ChildT], err error) {
+) (children []Provider[ChildT], err RegistrationError) {
 	if unstruct.Child != nil && unstruct.Child.IsStatic() {
 		var child ChildT
 		child, err = unstruct.Child.Provide(nil)

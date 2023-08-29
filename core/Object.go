@@ -13,7 +13,7 @@ type Object interface {
 	ImplementationType() string
 	DefinitionLocation() *Location
 	Description() string
-	Register(*Engine, string) error
+	Register(*Engine, string) RegistrationError
 	Bind(*Engine) error
 }
 

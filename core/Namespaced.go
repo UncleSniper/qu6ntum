@@ -5,7 +5,10 @@ type Namespaced[ChildT Object] struct {
 	Children []Structured[ChildT]
 }
 
-func(ns *Namespaced[ChildT]) Register(engine *Engine, outerNamespace string) ([]Provider[ChildT], error) {
+func(ns *Namespaced[ChildT]) Register(
+	engine *Engine,
+	outerNamespace string,
+) ([]Provider[ChildT], RegistrationError) {
 	innerNamespace := JoinNames(outerNamespace, ns.Name)
 	var children []Provider[ChildT]
 	for _, ref := range ns.Children {

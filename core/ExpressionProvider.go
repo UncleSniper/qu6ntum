@@ -3,7 +3,7 @@ package core
 type ExpressionProvider[SubjectT any] struct {
 	Location *Location
 	Expression Expression
-	Conversion func(Value) (SubjectT, error)
+	Conversion func(Value) (SubjectT, RegistrationError)
 }
 
 func(provider *ExpressionProvider[SubjectT]) ProvisionLocation() *Location {
@@ -27,7 +27,7 @@ func(provider *ExpressionProvider[SubjectT]) Bind(engine *Engine) error {
 	return provider.Expression.Bind(engine)
 }
 
-func(provider *ExpressionProvider[SubjectT]) Provide(context Context) (subject SubjectT, err error) {
+func(provider *ExpressionProvider[SubjectT]) Provide(context Context) (subject SubjectT, err RegistrationError) {
 	if provider.Expression == nil {
 		return
 	}
