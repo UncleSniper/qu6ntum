@@ -1,6 +1,7 @@
 package core
 
 import (
+	"errors"
 	"strings"
 )
 
@@ -41,4 +42,29 @@ func(value *ListValue) GetAs(target ValueType) (Value, error) {
 	return GetTypedValueAs(value, listValueTypeInfo, target)
 }
 
-var _ Value = &ListValue{}
+func(value *ListValue) Iterator() Iterator {
+	var elements []Value
+	for _, child := range value.Value {
+		if child != nil {
+			elements = append(elements, child)
+		}
+	}
+	return &SnapshotIterator {
+		Values: elements,
+	}
+}
+
+func ConvertListToBool(listValue Value) (boolValue Value, err error) {
+	listInstance, ok := listValue.(*ListValue)
+	if !ok {
+		err = errors.New("Not given a *ListValue")
+	} else {
+		boolValue = &BoolValue {
+			Location: listInstance.Location,
+			Value: len(listInstance.Value) > 0,
+		}
+	}
+	return
+}
+
+var _ IterableValue = &ListValue{}

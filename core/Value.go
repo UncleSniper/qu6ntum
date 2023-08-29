@@ -55,7 +55,7 @@ func(info *ValueTypeInfo) SetConversion(target ValueType, conversion ValueConver
 	info.conversions[target] = conversion
 }
 
-func identityConversion(value Value) (Value, error) {
+func IdentityConversion(value Value) (Value, error) {
 	return value, nil
 }
 
@@ -77,6 +77,15 @@ func NewValueType(name string) *ValueTypeInfo {
 			ip6SocketAddressTypeInfo,
 			iterableValueTypeInfo,
 		}
+		intValueTypeInfo.SetConversion(VT_STRING, ConvertIntToString)
+		intValueTypeInfo.SetConversion(VT_BOOL, ConvertIntToBool)
+		stringValueTypeInfo.SetConversion(VT_INT, ConvertStringToInt)
+		stringValueTypeInfo.SetConversion(VT_FLOAT, ConvertStringToFloat)
+		stringValueTypeInfo.SetConversion(VT_BOOL, ConvertStringToBool)
+		listValueTypeInfo.SetConversion(VT_BOOL, ConvertListToBool)
+		listValueTypeInfo.SetConversion(VT_ITERABLE, IdentityConversion)
+		mapValueTypeInfo.SetConversion(VT_BOOL, ConvertMapToBool)
+		mapValueTypeInfo.SetConversion(VT_ITERABLE, IdentityConversion)
 	}
 	if len(name) == 0 {
 		name = "<anonymous type>"
@@ -86,7 +95,7 @@ func NewValueType(name string) *ValueTypeInfo {
 		name: name,
 		conversions: make(map[ValueType]ValueConversion),
 	}
-	info.conversions[info.typeID] = identityConversion
+	info.conversions[info.typeID] = IdentityConversion
 	knownValueTypes = append(knownValueTypes, info)
 	return info
 }

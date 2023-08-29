@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"errors"
 	"strings"
 	"strconv"
 )
@@ -248,4 +249,73 @@ func(theMap *MapValue) Size() int {
 	return size
 }
 
-var _ Value = &MapValue{}
+func(theMap *MapValue) Iterator() Iterator {
+	var elements []Value
+	if theMap.ints != nil {
+		for key, value := range theMap.ints {
+			elements = append(elements, &ListValue {
+				Location: theMap.Location,
+				Value: []Value {
+					&IntValue {
+						Location: theMap.Location,
+						Value: key,
+					},
+					value,
+				},
+			})
+		}
+	}
+	if theMap.strings != nil {
+		for key, value := range theMap.strings {
+			elements = append(elements, &ListValue {
+				Location: theMap.Location,
+				Value: []Value {
+					&StringValue {
+						Location: theMap.Location,
+						Value: key,
+					},
+					value,
+				},
+			})
+		}
+	}
+	if theMap.objects != nil {
+		for _, pair := range theMap.objects {
+			var location *Location
+			if pair.key != nil {
+				location = pair.key.DefinitionLocation()
+			}
+			if location == nil {
+				location = theMap.Location
+			}
+			elements = append(elements, &ListValue {
+				Location: theMap.Location,
+				Value: []Value {
+					&ObjectValue {
+						Location: location,
+						Value: pair.key,
+					},
+					pair.value,
+				},
+			})
+		}
+	}
+	return &SnapshotIterator {
+		Values: elements,
+	}
+}
+
+func ConvertMapToBool(mapValue Value) (boolValue Value, err error) {
+	mapInstance, ok := mapValue.(*MapValue)
+	if !ok {
+		err = errors.New("Not given a *MapValue")
+	} else {
+		boolValue = &BoolValue {
+			Location: mapInstance.Location,
+			Value: mapInstance.Size() > 0,
+		}
+	}
+	return
+}
+
+var _ IterableValue = &MapValue{}

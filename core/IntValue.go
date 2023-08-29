@@ -1,6 +1,7 @@
 package core
 
 import (
+	"errors"
 	"strings"
 	"strconv"
 )
@@ -29,6 +30,32 @@ func(value *IntValue) Format(builder *strings.Builder) {
 
 func(value *IntValue) GetAs(target ValueType) (Value, error) {
 	return GetTypedValueAs(value, intValueTypeInfo, target)
+}
+
+func ConvertIntToString(intValue Value) (strValue Value, err error) {
+	intInstance, ok := intValue.(*IntValue)
+	if !ok {
+		err = errors.New("Not given a *IntValue")
+	} else {
+		strValue = &StringValue {
+			Location: intInstance.Location,
+			Value: strconv.FormatInt(intInstance.Value, 10),
+		}
+	}
+	return
+}
+
+func ConvertIntToBool(intValue Value) (boolValue Value, err error) {
+	intInstance, ok := intValue.(*IntValue)
+	if !ok {
+		err = errors.New("Not given a *IntValue")
+	} else {
+		boolValue = &BoolValue {
+			Location: intInstance.Location,
+			Value: intInstance.Value != 0,
+		}
+	}
+	return
 }
 
 var _ Value = &IntValue{}
