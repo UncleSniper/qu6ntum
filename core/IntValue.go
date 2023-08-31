@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"errors"
 	"strings"
 	"strconv"
@@ -53,6 +54,21 @@ func ConvertIntToBool(intValue Value) (boolValue Value, err error) {
 		boolValue = &BoolValue {
 			Location: intInstance.Location,
 			Value: intInstance.Value != 0,
+		}
+	}
+	return
+}
+
+func ConvertIntToFileSize(intValue Value) (sizeValue Value, err error) {
+	intInstance, ok := intValue.(*IntValue)
+	if !ok {
+		err = errors.New("Not given a *IntValue")
+	} else if intInstance.Value < 0 {
+		err = errors.New(fmt.Sprintf("Integer %d exceeds range of a fileSize", intInstance.Value))
+	} else {
+		sizeValue = &FileSizeValue {
+			Location: intInstance.Location,
+			Value: uint64(intInstance.Value),
 		}
 	}
 	return

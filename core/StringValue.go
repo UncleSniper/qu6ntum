@@ -88,4 +88,21 @@ func ConvertStringToBool(strValue Value) (boolValue Value, err error) {
 	return
 }
 
+func ConvertStringToFileSize(strValue Value) (sizeValue Value, err error) {
+	strInstance, ok := strValue.(*StringValue)
+	if !ok {
+		err = errors.New("Not given a *StringValue")
+		return
+	}
+	var theSize uint64
+	theSize, err = strconv.ParseUint(strInstance.Value, 0, 64)
+	if err != nil {
+		sizeValue = &FileSizeValue {
+			Location: strInstance.Location,
+			Value: theSize,
+		}
+	}
+	return
+}
+
 var _ Value = &StringValue{}

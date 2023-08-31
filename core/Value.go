@@ -11,6 +11,7 @@ const (
 	VT_FLOAT
 	VT_STRING
 	VT_BOOL
+	VT_FILE_SIZE
 	VT_OBJECT
 	VT_LIST
 	VT_MAP
@@ -61,31 +62,54 @@ func IdentityConversion(value Value) (Value, error) {
 
 var knownValueTypes []*ValueTypeInfo
 
+func initKnownValueTypes() {
+	knownValueTypes = []*ValueTypeInfo {
+		intValueTypeInfo,
+		floatValueTypeInfo,
+		stringValueTypeInfo,
+		boolValueTypeInfo,
+		fileSizeValueTypeInfo,
+		objectValueTypeInfo,
+		listValueTypeInfo,
+		mapValueTypeInfo,
+		ip4AddressTypeInfo,
+		ip6AddressTypeInfo,
+		ip4SocketAddressTypeInfo,
+		ip6SocketAddressTypeInfo,
+		iterableValueTypeInfo,
+	}
+	intValueTypeInfo.SetConversion(VT_INT, IdentityConversion)
+	intValueTypeInfo.SetConversion(VT_STRING, ConvertIntToString)
+	intValueTypeInfo.SetConversion(VT_BOOL, ConvertIntToBool)
+	intValueTypeInfo.SetConversion(VT_FILE_SIZE, ConvertIntToFileSize)
+	floatValueTypeInfo.SetConversion(VT_FLOAT, IdentityConversion)
+	stringValueTypeInfo.SetConversion(VT_STRING, IdentityConversion)
+	stringValueTypeInfo.SetConversion(VT_INT, ConvertStringToInt)
+	stringValueTypeInfo.SetConversion(VT_FLOAT, ConvertStringToFloat)
+	stringValueTypeInfo.SetConversion(VT_BOOL, ConvertStringToBool)
+	stringValueTypeInfo.SetConversion(VT_FILE_SIZE, ConvertStringToFileSize)
+	boolValueTypeInfo.SetConversion(VT_BOOL, IdentityConversion)
+	fileSizeValueTypeInfo.SetConversion(VT_FILE_SIZE, IdentityConversion)
+	fileSizeValueTypeInfo.SetConversion(VT_STRING, ConvertFileSizeToString)
+	fileSizeValueTypeInfo.SetConversion(VT_BOOL, ConvertFileSizeToBool)
+	fileSizeValueTypeInfo.SetConversion(VT_INT, ConvertFileSizeToInt)
+	objectValueTypeInfo.SetConversion(VT_OBJECT, IdentityConversion)
+	listValueTypeInfo.SetConversion(VT_LIST, IdentityConversion)
+	listValueTypeInfo.SetConversion(VT_BOOL, ConvertListToBool)
+	listValueTypeInfo.SetConversion(VT_ITERABLE, IdentityConversion)
+	mapValueTypeInfo.SetConversion(VT_MAP, IdentityConversion)
+	mapValueTypeInfo.SetConversion(VT_BOOL, ConvertMapToBool)
+	mapValueTypeInfo.SetConversion(VT_ITERABLE, IdentityConversion)
+	ip4AddressTypeInfo.SetConversion(VT_IP4_ADDRESS, IdentityConversion)
+	ip4SocketAddressTypeInfo.SetConversion(VT_IP4_SOCKET_ADDRESS, IdentityConversion)
+	ip6AddressTypeInfo.SetConversion(VT_IP6_ADDRESS, IdentityConversion)
+	ip6SocketAddressTypeInfo.SetConversion(VT_IP6_SOCKET_ADDRESS, IdentityConversion)
+	iterableValueTypeInfo.SetConversion(VT_ITERABLE, IdentityConversion)
+}
+
 func NewValueType(name string) *ValueTypeInfo {
 	if knownValueTypes == nil {
-		knownValueTypes = []*ValueTypeInfo {
-			intValueTypeInfo,
-			floatValueTypeInfo,
-			stringValueTypeInfo,
-			boolValueTypeInfo,
-			objectValueTypeInfo,
-			listValueTypeInfo,
-			mapValueTypeInfo,
-			ip4AddressTypeInfo,
-			ip6AddressTypeInfo,
-			ip4SocketAddressTypeInfo,
-			ip6SocketAddressTypeInfo,
-			iterableValueTypeInfo,
-		}
-		intValueTypeInfo.SetConversion(VT_STRING, ConvertIntToString)
-		intValueTypeInfo.SetConversion(VT_BOOL, ConvertIntToBool)
-		stringValueTypeInfo.SetConversion(VT_INT, ConvertStringToInt)
-		stringValueTypeInfo.SetConversion(VT_FLOAT, ConvertStringToFloat)
-		stringValueTypeInfo.SetConversion(VT_BOOL, ConvertStringToBool)
-		listValueTypeInfo.SetConversion(VT_BOOL, ConvertListToBool)
-		listValueTypeInfo.SetConversion(VT_ITERABLE, IdentityConversion)
-		mapValueTypeInfo.SetConversion(VT_BOOL, ConvertMapToBool)
-		mapValueTypeInfo.SetConversion(VT_ITERABLE, IdentityConversion)
+		initKnownValueTypes()
 	}
 	if len(name) == 0 {
 		name = "<anonymous type>"
@@ -101,6 +125,9 @@ func NewValueType(name string) *ValueTypeInfo {
 }
 
 func GetValueTypeInfo(id ValueType) *ValueTypeInfo {
+	if knownValueTypes == nil {
+		initKnownValueTypes()
+	}
 	if id == 0 || int(id) > len(knownValueTypes) {
 		return nil
 	}
